@@ -1,0 +1,30 @@
+service: joey-error-case
+
+frameworkVersion: "3"
+
+provider:
+  name: aws
+  runtime: dotnet6
+  stage: dev
+  region: us-west-2
+
+package:
+  individually: true
+
+functions:
+  hello:
+    handler: ErrorExample::ErrorExample.LambdaEntryPoint::FunctionHandlerAsync
+    package:
+      artifact: src/ErrorExample/bin/Release/net6.0/hello.zip
+    events:
+      - http:
+          method: any
+          path: /{proxy+}
+          cors: true
+
+plugins:
+  - serverless-plugin-datadog
+custom:
+  datadog:
+    addExtension: true
+    apiKey: ${env:DATADOG_API_KEY}
